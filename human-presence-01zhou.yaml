@@ -1,0 +1,73 @@
+esphome:
+  name: "esphuman-presence-01"
+  
+
+esp8266:
+  board: d1_mini
+  restore_from_flash: true
+
+# Enable logging
+logger:
+  level: none
+  baud_rate: 0 #disable logging over uart
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+
+        
+web_server:
+  port: 80
+  include_internal: true
+  ota: false
+  version: 2
+ 
+captive_portal:
+i2c:
+  sda: GPIO4
+  scl: GPIO5
+  scan: true
+  id: bus_a
+
+sensor:
+  - platform: bh1750
+    name: "Human Presence 1 Illuminance"
+    address: 0x23
+    update_interval: 60s
+ 
+      
+      
+
+
+
+binary_sensor:
+  - platform: gpio
+    id: human_presence_1_motion
+    pin: 
+      number: GPIO16  #D0
+      mode: INPUT_PULLDOWN
+    name: "human_presence_1"
+    device_class: presence
+    
+  - platform: gpio
+    id: human_presence_1_PIR
+    pin: GPIO12  #D6
+    name: "human_presence_1_pir"
+    device_class: motion
+    
+#output:
+#  - platform: gpio
+#    id: "human_presence_1_light"
+#    pin: GPIO2  #D4
+#    inverted: true
+    
+#light:
+#  - platform: binary
+#    output: "human_presence_1_light"
+ #   name: "human presence 1 light"
