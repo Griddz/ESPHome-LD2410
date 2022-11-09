@@ -1,5 +1,7 @@
 esphome:
-  name: ld2410
+  name: "esphuman-presence-01"
+  
+
   includes:
     - ld2410_uart.h
   on_boot:
@@ -42,26 +44,9 @@ i2c:
   scan: true
   id: bus_a
   
-sensor:
-  - platform: bh1750
-    name: "Human Presence 1 Illuminance"
-    address: 0x23
-    update_interval: 60s    
-      
-binary_sensor:
-  - platform: gpio
-    id: human_presence_1_motion
-    pin: 
-      number: GPIO16  #D0
-      mode: INPUT_PULLDOWN
-    name: "human_presence_1"
-    device_class: presence
-    
-  - platform: gpio
-    id: human_presence_1_PIR
-    pin: GPIO12  #D6
-    name: "human_presence_1_pir"
-    device_class: motion
+
+
+
   
   
   
@@ -97,7 +82,30 @@ binary_sensor:
       - name: "Has Still Target"
       - name: "Last Command Success"
   
+  - platform: gpio
+    id: human_presence_1_motion
+    pin: 
+      number: GPIO16  #D0
+      mode: INPUT_PULLDOWN
+    name: "human_presence_1"
+    device_class: presence
+    
+  - platform: gpio
+    id: human_presence_1_PIR
+    pin: GPIO12  #D6
+    name: "human_presence_1_pir"
+    device_class: motion
+
+
+
+  
 sensor:
+  - platform: bh1750
+    name: "Human Presence 1 Illuminance"
+    address: 0x23
+    update_interval: 60s    
+      
+
   - platform: custom
     lambda: |-
       auto uart_component = static_cast<LD2410 *>(ld2410);
@@ -188,4 +196,3 @@ button:
     name: "Set baud rate to 9600"
     on_press:
       - lambda: 'static_cast<LD2410 *>(ld2410)->setBaudrate(1);'
-
