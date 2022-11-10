@@ -2,16 +2,24 @@ esphome:
   name: "esphuman-presence-01"
   
 
+  includes:
+    - ld2410_uart.h
+  on_boot:
+    priority: 600
+    # ...
+    then:
+      - lambda: |-
+          auto uart_component = static_cast<LD2410 *>(ld2410);
+          uart_component->setNumbers(maxMovingDistanceRange, maxStillDistanceRange, noneDuration);
+
 esp8266:
   board: d1_mini
-  restore_from_flash: true
 
 # Enable logging
 logger:
-  level: none
+#  level: none
   baud_rate: 0 #disable logging over uart
 
-# Enable Home Assistant API
 api:
 
 ota:
@@ -20,13 +28,10 @@ wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
 
+  ap:
+    ssid: "LD2410 Fallback Hotspot"
 
-        
-web_server:
-  port: 80
-  include_internal: true
-  ota: false
-  version: 2
+
  
 captive_portal:
 i2c:
@@ -34,19 +39,45 @@ i2c:
   scl: GPIO5
   scan: true
   id: bus_a
+  
 
-sensor:
-  - platform: bh1750
-    name: "Human Presence 1 Illuminance"
-    address: 0x23
-    update_interval: 60s
- 
+
+
+  
+  
+  
+  
+  
+uart:
+  id: uart1
+  tx_pin: TX
+  rx_pin: RX
+  baud_rate: 256000 # Change this according to your setting
+  parity: NONE
+  stop_bits: 1
+#  debug:
+#    direction: BOTH
+#    dummy_receiver: false
+#    after:
+#      delimiter: [0xF8,0xF7,0xF6,0xF5]
       
+custom_component:
+  - lambda: |-
+      return {new LD2410(id(uart1))};
+    components:
+      - id: ld2410
       
-
-
-
 binary_sensor:
+  - platform: custom
+    lambda: |-
+      auto uart_component = static_cast<LD2410 *>(ld2410);
+      return {uart_component->hasTarget,uart_component->hasMovingTarget,uart_component->hasStillTarget,uart_component->lastCommandSuccess};
+    binary_sensors:
+      - name: "Has Target"
+      - name: "Has Moving Target"
+      - name: "Has Still Target"
+      - name: "Last Command Success"
+  
   - platform: gpio
     id: human_presence_1_motion
     pin: 
@@ -60,14 +91,3 @@ binary_sensor:
     pin: GPIO12  #D6
     name: "human_presence_1_pir"
     device_class: motion
-    
-#output:
-#  - platform: gpio
-#    id: "human_presence_1_light"
-#    pin: GPIO2  #D4
-#    inverted: true
-    
-#light:
-#  - platform: binary
-#    output: "human_presence_1_light"
- #   name: "human presence 1 light"
