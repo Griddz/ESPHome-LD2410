@@ -87,20 +87,19 @@ binary_sensor:
     pin: GPIO12  #D6
     name: ${upper_devicename} human_presence_pir
     device_class: motion
-    
-    sensor:
+  
+sensor:
   - platform: bh1750
     name: ${upper_devicename} Human Presence Illuminance
     address: 0x23
-  filters:
-    - calibrate_polynomial:
-       degree: 2
-       datapoints:
-        # Map 0.0 (from sensor) to 0.0 (true value)
-        - 0.0 -> 0.0
-        - 0.6 -> 7
-        - 8.3 -> 17
+    filters:
+      - calibrate_linear:
+          # Map 0.0 (from sensor) to 0.0 (true value)
+          - 0.0 -> 0.0
+          - 8.3 -> 17
     update_interval: 60s    
+
+
       
 
   - platform: custom
@@ -108,7 +107,7 @@ binary_sensor:
       auto uart_component = static_cast<LD2410 *>(ld2410);
       return {uart_component->movingTargetDistance,uart_component->movingTargetEnergy,uart_component->stillTargetDistance,uart_component->stillTargetEnergy,uart_component->detectDistance};
     sensors:
-      - name: "${upper_devicename} Moving Target Distance
+      - name: ${upper_devicename} Moving Target Distance
         unit_of_measurement: "cm"
         accuracy_decimals: 0
       - name: ${upper_devicename} Moving Target Energy
@@ -123,6 +122,13 @@ binary_sensor:
       - name: ${upper_devicename} Detect Distance
         unit_of_measurement: "cm"
         accuracy_decimals: 0
+  - platform: wifi_signal
+    name: ${upper_devicename} WiFi Signal
+    update_interval: 60s        
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: ${upper_devicename} IP Address     
 
 number:        
   - platform: template
