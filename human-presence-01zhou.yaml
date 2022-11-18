@@ -22,7 +22,7 @@ esp8266:
 
 # Enable logging
 logger:
-#  level: none
+#  level: warn
   baud_rate: 0 #disable logging over uart
 
 api:
