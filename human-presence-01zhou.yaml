@@ -1,9 +1,10 @@
+#这个是Esp8266 D1mini+雷达Ld1024+光感BH1750+红外ASM312
 substitutions:
-  devicename: "presence-espld2410b-01" #Rename the device what you want.
-  upper_devicename: mRadar01 #Rename the device what you want.
+  devicename: presence-espld1024b-01 #Rename the device what you want. 
+  upper_devicename: mRadar01-   #Rename the device what you want.
 esphome:
-  name: $devicename
-
+  name: ${devicename}
+  name_add_mac_suffix: false
   
 
   includes:
@@ -69,35 +70,35 @@ binary_sensor:
       auto uart_component = static_cast<LD2410 *>(ld2410);
       return {uart_component->hasTarget,uart_component->hasMovingTarget,uart_component->hasStillTarget,uart_component->lastCommandSuccess};
     binary_sensors:
-      - name: ${upper_devicename} Has Target
-      - name: ${upper_devicename} Has Moving Target
-      - name: ${upper_devicename} Has Still Target
-      - name: ${upper_devicename} Last Command Success
+      - name: ${upper_devicename}Has Target
+      - name: ${upper_devicename}Has Moving Target
+      - name: ${upper_devicename}Has Still Target
+      - name: ${upper_devicename}Last Command Success
   
   - platform: gpio
-    id: human_presence_1_motion
+    id: human_presence_motion
     pin: 
       number: GPIO16  #D0
       mode: INPUT_PULLDOWN
-    name: ${upper_devicename} human_presence
+    name: ${upper_devicename}human_presence
     device_class: presence
     
   - platform: gpio
-    id: human_presence_1_PIR
+    id: human_presence_PIR
     pin: GPIO12  #D6
-    name: ${upper_devicename} human_presence_pir
+    name: ${upper_devicename}pir
     device_class: motion
   
 sensor:
   - platform: bh1750
-    name: ${upper_devicename} Human Presence Illuminance
+    name: ${upper_devicename}Illuminance
     address: 0x23
     filters:
       - calibrate_linear:
           # Map 0.0 (from sensor) to 0.0 (true value)
           - 0.0 -> 0.0
           - 8.3 -> 17
-    update_interval: 60s    
+    update_interval: 20s    
 
 
       
@@ -107,32 +108,32 @@ sensor:
       auto uart_component = static_cast<LD2410 *>(ld2410);
       return {uart_component->movingTargetDistance,uart_component->movingTargetEnergy,uart_component->stillTargetDistance,uart_component->stillTargetEnergy,uart_component->detectDistance};
     sensors:
-      - name: ${upper_devicename} Moving Target Distance
+      - name: ${upper_devicename}Moving Target Distance
         unit_of_measurement: "cm"
         accuracy_decimals: 0
-      - name: ${upper_devicename} Moving Target Energy
+      - name: ${upper_devicename}Moving Target Energy
         unit_of_measurement: "%"
         accuracy_decimals: 0
-      - name: ${upper_devicename} Still Target Distance
+      - name: ${upper_devicename}Still Target Distance
         unit_of_measurement: "cm"
         accuracy_decimals: 0
-      - name: ${upper_devicename} Still Target Energy
+      - name: ${upper_devicename}Still Target Energy
         unit_of_measurement: "%"
         accuracy_decimals: 0
-      - name: ${upper_devicename} Detect Distance
+      - name: ${upper_devicename}Detect Distance
         unit_of_measurement: "cm"
         accuracy_decimals: 0
   - platform: wifi_signal
-    name: ${upper_devicename} WiFi Signal
+    name: ${upper_devicename}WiFi Signal
     update_interval: 60s        
 text_sensor:
   - platform: wifi_info
     ip_address:
-      name: ${upper_devicename} IP Address     
+      name: ${upper_devicename}IP Address     
 
 number:        
   - platform: template
-    name: ${upper_devicename} Max Moving Distance Range
+    name: ${upper_devicename}Max Moving Distance Range
     id: maxMovingDistanceRange
     min_value: 1
     max_value: 8
@@ -144,7 +145,7 @@ number:
           auto uart_component = static_cast<LD2410 *>(ld2410);
           uart_component->setMaxDistancesAndNoneDuration(x,id(maxStillDistanceRange).state,id(noneDuration).state);
   - platform: template
-    name: ${upper_devicename} Max Still Distance Range
+    name: ${upper_devicename}Max Still Distance Range
     id: maxStillDistanceRange
     min_value: 1
     max_value: 8
@@ -156,7 +157,7 @@ number:
           auto uart_component = static_cast<LD2410 *>(ld2410);
           uart_component->setMaxDistancesAndNoneDuration(id(maxMovingDistanceRange).state,x,id(noneDuration).state);
   - platform: template
-    name: ${upper_devicename} None Duration
+    name: ${upper_devicename}None Duration
     id: noneDuration
     min_value: 0
     max_value: 32767
@@ -172,32 +173,32 @@ number:
 
 button:
   - platform: template
-    name: ${upper_devicename} Reboot LD2410
+    name: ${upper_devicename}Reboot LD2410
     on_press:
       lambda: 'static_cast<LD2410 *>(ld2410)->reboot();'
   - platform: template
-    name: ${upper_devicename} Turn on config mode
+    name: ${upper_devicename}Turn on config mode
     on_press:
       - lambda: 'static_cast<LD2410 *>(ld2410)->setConfigMode(true);'
   - platform: template
-    name: ${upper_devicename} Turn off config mode
+    name: ${upper_devicename}Turn off config mode
     on_press:
       - lambda: 'static_cast<LD2410 *>(ld2410)->setConfigMode(false);'
   - platform: template
-    name: ${upper_devicename} Get config
+    name: ${upper_devicename}Get config
     on_press:
       - lambda: 'static_cast<LD2410 *>(ld2410)->queryParameters();'
    
   # - platform: template
-  #   name: "Set baud rate to 256000"
+  #   name: ${upper_devicename}"Set baud rate to 256000"
   #   on_press:
   #     - lambda: 'static_cast<LD2410 *>(ld2410)->setBaudrate(7);'
   # - platform: template
-  #   name: "Set baud rate to 115200"
+  #   name: ${upper_devicename}"Set baud rate to 115200"
   #   on_press:
   #     - lambda: 'static_cast<LD2410 *>(ld2410)->setBaudrate(5);'
   # - platform: template
-  #   name: "Set baud rate to 9600"
+  #   name: ${upper_devicename}"Set baud rate to 9600"
   #   on_press:
   #     - lambda: 'static_cast<LD2410 *>(ld2410)->setBaudrate(1);'
 
