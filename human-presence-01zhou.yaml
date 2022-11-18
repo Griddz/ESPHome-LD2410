@@ -1,6 +1,6 @@
 #这个是Esp8266 D1mini+雷达Ld1024+光感BH1750+红外ASM312
 substitutions:
-  devicename: presence-espld1024b-01 #Rename the device what you want. 
+  devicename: presence-espld2410b-01 #Rename the device what you want. 
   upper_devicename: mRadar01-   #Rename the device what you want.
 esphome:
   name: ${devicename}
