@@ -34,7 +34,7 @@ wifi:
   password: !secret wifi_password
 
   ap:
-    ssid: "LD2410 Fallback Hotspot"
+    ssid: ${upper_devicename}LD2410 Fallback Hotspot
 
 
  
