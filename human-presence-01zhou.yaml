@@ -188,6 +188,8 @@ button:
     name: ${upper_devicename}Get config
     on_press:
       - lambda: 'static_cast<LD2410 *>(ld2410)->queryParameters();'
+  - platform: restart
+    name: ${upper_devicename}Restart    
    
   # - platform: template
   #   name: ${upper_devicename}"Set baud rate to 256000"
