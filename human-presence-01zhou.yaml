@@ -1,7 +1,7 @@
 #这个是Esp8266 D1mini+雷达Ld1024+光感BH1750+红外ASM312
 substitutions:
-  devicename: presence-espld2410b-01 #Rename the device what you want. 
-  upper_devicename: mRadar01-   #Rename the device what you want.
+  devicename: presence-espld2410b-04 #Rename the device what you want. 
+  upper_devicename: mRadar04-   #Rename the device what you want.
 esphome:
   name: ${devicename}
   name_add_mac_suffix: false
@@ -46,7 +46,7 @@ i2c:
   id: bus_a
   
 uart:
-  id: uart1
+  id: uart3
   tx_pin: TX
   rx_pin: RX
   baud_rate: 256000 # Change this according to your setting
@@ -60,7 +60,7 @@ uart:
       
 custom_component:
   - lambda: |-
-      return {new LD2410(id(uart1))};
+      return {new LD2410(id(uart3))};
     components:
       - id: ld2410
       
@@ -83,22 +83,22 @@ binary_sensor:
     name: ${upper_devicename}human_presence
     device_class: presence
     
-  - platform: gpio
-    id: human_presence_PIR
-    pin: GPIO12  #D6
-    name: ${upper_devicename}pir
-    device_class: motion
+  # - platform: gpio
+  #   id: human_presence_PIR
+  #   pin: GPIO12  #D6
+  #   name: ${upper_devicename}pir
+  #   device_class: motion
   
 sensor:
-  - platform: bh1750
-    name: ${upper_devicename}Illuminance
-    address: 0x23
-    filters:
-      - calibrate_linear:
-          # Map 0.0 (from sensor) to 0.0 (true value)
-          - 0.0 -> 0.0
-          - 8.3 -> 17
-    update_interval: 10s    
+  # - platform: bh1750
+  #   name: ${upper_devicename}Illuminance
+  #   address: 0x23
+  #   filters:
+  #     - calibrate_linear:
+  #         # Map 0.0 (from sensor) to 0.0 (true value)
+  #         - 0.0 -> 0.0
+  #         - 8.3 -> 17
+  #   update_interval: 20s    
 
 
       
@@ -188,8 +188,6 @@ button:
     name: ${upper_devicename}Get config
     on_press:
       - lambda: 'static_cast<LD2410 *>(ld2410)->queryParameters();'
-  - platform: restart
-    name: ${upper_devicename}Restart    
    
   # - platform: template
   #   name: ${upper_devicename}"Set baud rate to 256000"
@@ -203,4 +201,3 @@ button:
   #   name: ${upper_devicename}"Set baud rate to 9600"
   #   on_press:
   #     - lambda: 'static_cast<LD2410 *>(ld2410)->setBaudrate(1);'
-
